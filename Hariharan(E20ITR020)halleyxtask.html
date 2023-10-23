@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag & Drop Using JavaScript</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .layout {
+            width: 100vw;
+            height: 100vh;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+            position: relative;
+        }
+
+        .layout div {
+            width: 100%;
+        }
+
+        .table-cell {
+            border: 1px solid #ccc;
+            padding: 5px;
+            width: 100px;
+            height: 50px;
+        }
+
+        .table-cell b {
+            font-weight: bold;
+        }
+
+        .layout button {
+            background-color: blue;
+            color: white;
+            padding: 10px;
+            display: block;
+        }
+
+        .layout label {
+            display: block;
+        }
+
+        .container-div {
+            display: block;
+        }
+
+        .selectable-options {
+            border: 1px solid #ccc;
+            padding: 5px;
+            width: 150px;
+        }
+
+        .checkbox-container {
+            margin-top: 10px;
+        }
+
+        .checkbox-label {
+            display: block;
+            color: #ff5733;
+            font-weight: bold;
+        }
+
+        .checkbox-input {
+            margin-right: 5px;
+        }
+
+        .navigation-option {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+
+        .address {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .published-content {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .publish-button, .preview-button, .clear-button, .save-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .publish-button:hover, .preview-button:hover, .clear-button:hover, .save-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="left" style="background-color: #0E6832;">
+        <div class="list" draggable="true" data-item="layout">Layout</div>
+        <div class="list" draggable="true" data-item="text">Text</div>
+        <div class="list" draggable="true" data-item="button">Button</div>
+        <div class="list" draggable="true" data-item="image">Image</div>
+        <div class="list" draggable="true" data-item="checkbox">Checkbox</div>
+        <div class="list" draggable="true" data-item="radio">Radio Button</div>
+        <div class="list" draggable="true" data-item="table">Table</div>
+        <div class="list" draggable="true" data-item="food-choice">Food Choice</div>
+        <div class="list" draggable="true" data-item="link">Link</div>
+        <div class="list" draggable="true" data-item="navigation">Navigation</div>
+    </div>
+    <div id="right">
+        <div class="buttons">
+            <button class="publish-button">Publish</button>
+            <button class="preview-button">Preview</button>
+        </div>
+        <div class="buttons" style="margin-top: 20px;">
+            <button class="clear-button">Clear</button>
+            <button class="save-button">Save</button>
+        </div>
+    </div>
+</div>
+<script>
+    let leftBox = document.getElementById("left");
+    let rightBox = document.getElementById("right");
+    let currentLayout = null;
+
+    leftBox.addEventListener("dragstart", function(e) {
+        e.dataTransfer.setData("text", e.target.getAttribute("data-item"));
+    });
+
+    rightBox.addEventListener("dragover", function(e) {
+        e.preventDefault();
+    });
+
+    rightBox.addEventListener("drop", function(e) {
+        e.preventDefault();
+        let item = e.dataTransfer.getData("text");
+        switch (item) {
+            case "layout":
+                let layoutDiv = document.createElement("div");
+                layoutDiv.classList.add("layout");
+                rightBox.appendChild(layoutDiv);
+                currentLayout = layoutDiv;
+                break;
+            case "text":
+                if (currentLayout) {
+                    let labelAndInput = document.createElement("div");
+                    labelAndInput.classList.add("container-div");
+                    currentLayout.appendChild(labelAndInput);
+
+                    let nameLabel = document.createElement("label");
+                    nameLabel.textContent = "Name: ";
+                    labelAndInput.appendChild(nameLabel);
+
+                    let textBox = document.createElement("textarea");
+                    textBox.rows = 1;
+                    textBox.cols = 9;
+                    labelAndInput.appendChild(textBox);
+                }
+                break;
+            case "button":
+                if (currentLayout) {
+                    let button = document.createElement("button");
+                    button.textContent = "Button";
+                    button.classList.add("layout-button");
+                    currentLayout.appendChild(button);
+                }
+                break;
+            case "image":
+                if (currentLayout) {
+                    let imageFrame = document.createElement("div");
+                    imageFrame.classList.add("image-frame");
+                    let image = document.createElement("img");
+                    // Set the image source here
+                    image.src = "your-image-source.jpg";
+                    imageFrame.appendChild(image);
+                    currentLayout.appendChild(imageFrame);
+                }
+                break;
+            case "checkbox":
+                if (currentLayout) {
+                    let checkboxContainer = document.createElement("div");
+                    checkboxContainer.classList.add("checkbox-container");
+                    currentLayout.appendChild(checkboxContainer);
+
+                    let checkboxLabel = document.createElement("label");
+                    checkboxLabel.classList.add("checkbox-label");
+                    checkboxLabel.textContent = "Title: ";
+                    checkboxContainer.appendChild(checkboxLabel);
+
+                    let mrCheckbox = document.createElement("input");
+                    mrCheckbox.type = "checkbox";
+                    mrCheckbox.name = "title";
+                    mrCheckbox.value = "mr";
+                    mrCheckbox.classList.add("checkbox-input");
+                    checkboxLabel.appendChild(mrCheckbox);
+                    checkboxLabel.appendChild(document.createTextNode("Mr."));
+
+                    let msCheckbox = document.createElement("input");
+                    msCheckbox.type = "checkbox";
+                    msCheckbox.name = "title";
+                    msCheckbox.value = "ms";
+                    msCheckbox.classList.add("checkbox-input");
+                    checkboxLabel.appendChild(msCheckbox);
+                    checkboxLabel.appendChild(document.createTextNode("Ms."));
+
+                    let missCheckbox = document.createElement("input");
+                    missCheckbox.type = "checkbox";
+                    missCheckbox.name = "title";
+                    missCheckbox.value = "miss";
+                    missCheckbox.classList.add("checkbox-input");
+                    checkboxLabel.appendChild(missCheckbox);
+                    checkboxLabel.appendChild(document.createTextNode("Miss"));
+                }
+                break;
+            case "radio":
+                if (currentLayout) {
+                    let radioContainer = document.createElement("div");
+                    radioContainer.classList.add("container-div");
+                    currentLayout.appendChild(radioContainer);
+
+                    let radioLabel = document.createElement("label");
+                    radioLabel.textContent = "Gender: ";
+                    radioContainer.appendChild(radioLabel);
+
+                    let maleRadio = document.createElement("input");
+                    maleRadio.type = "radio";
+                    maleRadio.name = "gender";
+                    maleRadio.value = "male";
+                    radioLabel.appendChild(maleRadio);
+                    radioLabel.appendChild(document.createTextNode("Male"));
+
+                    let femaleRadio = document.createElement("input");
+                    femaleRadio.type = "radio";
+                    femaleRadio.name = "gender";
+                    femaleRadio.value = "female";
+                    radioLabel.appendChild(femaleRadio);
+                    radioLabel.appendChild(document.createTextNode("Female"));
+
+                    let preferNotToSayRadio = document.createElement("input");
+                    preferNotToSayRadio.type = "radio";
+                    preferNotToSayRadio.name = "gender";
+                    preferNotToSayRadio.value = "prefer-not-to-say";
+                    radioLabel.appendChild(preferNotToSayRadio);
+                    radioLabel.appendChild(document.createTextNode("Prefer not to say"));
+                }
+                break;
+            case "table":
+                if (currentLayout) {
+                    let table = document.createElement("table");
+                    const menuItems = [
+                        "<b>Starter</b>", "<b>Main</b>", "<b>Dessert>",
+                        "Paneer Fry", "Mushroom Fried Rice", "Ice Cream"
+                    ];
+                    for (let i = 0; i < 2; i++) {
+                        let row = document.createElement("tr");
+                        for (let j = 0; j < 3; j++) {
+                            let cell = document.createElement("td");
+                            cell.classList.add("table-cell");
+                            cell.innerHTML = menuItems[i * 3 + j];
+                            row.appendChild(cell);
+                        }
+                        table.appendChild(row);
+                    }
+                    let caption = document.createElement("caption");
+                    caption.textContent = "Menu";
+                    table.appendChild(caption);
+                    currentLayout.appendChild(table);
+                }
+                break;
+            case "food-choice":
+                if (currentLayout) {
+                    let foodChoiceLabel = document.createElement("label");
+                    foodChoiceLabel.textContent = "Food Choice: ";
+                    currentLayout.appendChild(foodChoiceLabel);
+
+                    let foodChoiceOptions = document.createElement("select");
+                    foodChoiceOptions.classList.add("selectable-options");
+                    foodChoiceLabel.appendChild(foodChoiceOptions);
+
+                    let vegOption = document.createElement("option");
+                    vegOption.value = "veg";
+                    vegOption.textContent = "Veg";
+                    foodChoiceOptions.appendChild(vegOption);
+
+                    let nonVegOption = document.createElement("option");
+                    nonVegOption.value = "non-veg";
+                    nonVegOption.textContent = "Non Veg";
+                    foodChoiceOptions.appendChild(nonVegOption);
+
+                    let notToSayOption = document.createElement("option");
+                    notToSayOption.value = "not-say";
+                    notToSayOption.textContent = "Not to Say";
+                    foodChoiceOptions.appendChild(notToSayOption);
+                }
+                break;
+            case "link":
+                if (currentLayout) {
+                    let linkLabel = document.createElement("label");
+                    linkLabel.textContent = "Link: ";
+                    currentLayout.appendChild(linkLabel);
+
+                    let linkInput = document.createElement("input");
+                    linkInput.type = "text";
+                    linkInput.classList.add("link-input");
+                    linkLabel.appendChild(linkInput);
+                }
+                break;
+            case "navigation":
+                if (currentLayout) {
+                    let navigationItem = document.createElement("div");
+                    navigationItem.textContent = "Navigation";
+                    navigationItem.classList.add("address", "navigation-option");
+                    navigationItem.addEventListener("drop", handleNavigationDrop);
+                    navigationItem.addEventListener("dragover", allowDrop);
+                    currentLayout.appendChild(navigationItem);
+                }
+                break;
+        }
+    });
+
+    function handleNavigationDrop(e) {
+        e.preventDefault();
+        let navigationItem = e.dataTransfer.getData("text");
+        if (navigationItem === "navigation") {
+            let address = document.querySelector(".address");
+            if (address) {
+                address.textContent = "Navigation";
+                address.classList.add("navigation-option");
+                address.style.display = "block";
+            }
+        }
+    }
+
+    rightBox.addEventListener("dragstart", function(e) {
+        e.target.remove();
+    });
+
+    function allowDrop(e) {
+        e.preventDefault();
+    }
+
+    let publishButton = document.querySelector(".publish-button");
+    let previewButton = document.querySelector(".preview-button");
+    let clearButton = document.querySelector(".clear-button");
+    let saveButton = document.querySelector(".save-button");
+
+    publishButton.addEventListener("click", function() {
+        let rightContainer = document.getElementById("right");
+        let publishedContent = document.createElement("div");
+        publishedContent.classList.add("published-content");
+        let clonedContent = rightContainer.cloneNode(true);
+        publishedContent.appendChild(clonedContent);
+        document.body.appendChild(publishedContent);
+        alert("Publish button clicked. Content published.");
+    });
+
+    previewButton.addEventListener("click", function() {
+        let rightContainer = document.getElementById("right");
+        let previewWindow = window.open("", "Preview", "width=800,height=600");
+        let previewDocument = previewWindow.document;
+        let clonedContent = rightContainer.cloneNode(true);
+        previewDocument.body.appendChild(clonedContent);
+        alert("Preview button clicked. Content previewed.");
+    });
+
+    clearButton.addEventListener("click", function() {
+        if (currentLayout) {
+            while (currentLayout.firstChild) {
+                currentLayout.removeChild(currentLayout.firstChild);
+            }
+        }
+    });
+
+    saveButton.addEventListener("click", function() {
+        alert("Save button clicked. Content saved.");
+    });
+</script>
+</body>
+</html>
